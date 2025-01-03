@@ -245,26 +245,24 @@ public struct SubscriptionListView: View {
         .onAppear {
             withAnimation {
                 self.isLoading = true
-            } completion: {
-                Task {
-                    await fetchSubscriptions(firstTime: true)
-                    withAnimation {
-                        self.isLoading = false
-                    }
+            }
+            Task {
+                await fetchSubscriptions(firstTime: true)
+                withAnimation {
+                    self.isLoading = false
                 }
             }
         }
-        .onChange(of: selectedView) { _, _ in
+        .onChange(of: selectedView) { _ in
             withAnimation {
                 self.isLoading = true
-            } completion: {
+            }
                 Task {
                     await fetchSubscriptions()
                     withAnimation {
                         self.isLoading = false
                     }
                 }
-            }
         }
     }
 
