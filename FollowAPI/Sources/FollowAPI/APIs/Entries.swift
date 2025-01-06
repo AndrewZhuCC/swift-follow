@@ -254,7 +254,7 @@ public enum GetEntries {
 public actor EntriesService {
     public init() {}
 
-    public func postEntries(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool = false, read: Bool = false, publishedAfter: String? = nil) async throws -> PostEntries.Response {
+    public func postEntries(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool = false, read: Bool? = false, publishedAfter: String? = nil) async throws -> PostEntries.Response {
         let url = NetworkManager.baseURL.appendingPathComponent("entries")
 
         var parameters: [String: Sendable] = [:]
@@ -262,7 +262,7 @@ public actor EntriesService {
         if let listId = listId { parameters["listId"] = listId }
         if let view = view { parameters["view"] = view }
         parameters["isArchived"] = isArchived
-        parameters["read"] = read
+        if let read = read { parameters["read"] = read }
         if let publishedAfter = publishedAfter { parameters["publishedAfter"] = publishedAfter }
 
         return try await NetworkManager.shared.request(url,

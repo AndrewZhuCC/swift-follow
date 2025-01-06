@@ -18,6 +18,8 @@ public struct EntryListView: View {
     @State private var isLoadingMore: Bool = false
     @State private var isRefreshing: Bool = false
     @State private var isEnd: Bool = false
+    
+    @State private var allEntries: Bool = false
 
     public init() {}
 
@@ -77,6 +79,12 @@ public struct EntryListView: View {
                     }
                 }
             }
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Toggle("All Entries", isOn: $allEntries)
+                        .toggleStyle(.switch)
+                }
+            }
             .navigationTitle(feeds?.title ?? lists?.title ?? "Reader")
         }
         .font(.custom("SNProVF-Regular", size: 16))
@@ -94,7 +102,7 @@ public struct EntryListView: View {
         let service = EntriesService()
 
         do {
-            let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id)
+            let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id, read: allEntries ? nil : false)
             entries = result.data ?? []
             isEnd = result.data?.isEmpty ?? true
             withAnimation {
@@ -115,7 +123,7 @@ public struct EntryListView: View {
         let service = EntriesService()
 
         do {
-            let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id)
+            let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id, read: allEntries ? nil : false)
             entries = result.data ?? []
             isEnd = result.data?.isEmpty ?? true
             withAnimation {
@@ -139,6 +147,7 @@ public struct EntryListView: View {
             let result = try await service.postEntries(
                 feedId: feeds?.id,
                 listId: lists?.id,
+                read: allEntries ? nil : false,
                 publishedAfter: entries.last?.entries.publishedAt
             )
             entries.append(contentsOf: result.data ?? [])
